@@ -60,30 +60,27 @@
 <body>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>送信する</button>
-    </form> 
+      <input id="input" autocomplete="off" /><button>送信</button>
+    </form>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        let socket = io();
+<script>
+  const socket = io();
 
-        const form = document.getElementById("form");
-        const input = document.getElementById("input");
-        const messages = document.getElementById("messages");
+  document.querySelector('form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const message = document.getElementById('input').value;
+    if (message.trim()) {
+      socket.emit('chat message', message);
+      document.getElementById('input').value = '';
+    }
+  });
 
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-            if(input.value) {
-                socket.emit("chat message", input.value);
-                input.value="";
-            }
-        });
-
-    socket.on("chat message", function(meg) {
-    let item = document.createElement("li");
-    item.textContent = meg; // Corrected the typo from msg to meg
-    messages.appendChild(item);
-});
-    </script>
+  socket.on('chat message', function(msg) {
+    const li = document.createElement('li');
+    li.textContent = msg;
+    document.getElementById('messages').appendChild(li);
+  });
+</script>
 </body>
 </html>
